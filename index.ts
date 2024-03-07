@@ -1,15 +1,31 @@
-import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
-
-dotenv.config();
+import express, { Express } from 'express';
+import "dotenv/config";
+import mongoose from "mongoose";
+const connectDB = require('./config/db-connect')
 
 const app: Express = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT;
 
-app.get("/", (req: Request, res: Response) => {
-    res.send("Express + TypeScript Server");
-});
+mongoose.set('strictQuery', false);
 
-app.listen(port, () => {
-    console.log(`[server]: Server is running at http://localhost:${port}`);
-});
+
+//middlewares
+app.use(express.json())
+
+//routes
+
+const start = async () => {
+    try {
+        await connectDB(process.env.MONGODB_URI)
+        app.listen(port, () => {
+            console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+        }).on("error", err => {
+            console.error(err)
+            return err;
+        });
+    }
+    catch (e) {
+        console.error(e)
+    }
+}
+start()
