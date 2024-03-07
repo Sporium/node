@@ -5,6 +5,7 @@ const connectDB = require('./config/db-connect')
 
 const app: Express = express();
 const port = process.env.PORT;
+const routes = require('./routes')
 
 mongoose.set('strictQuery', false);
 
@@ -13,7 +14,7 @@ mongoose.set('strictQuery', false);
 app.use(express.json())
 
 //routes
-
+app.use('/api/v1', routes)
 const start = async () => {
     try {
         await connectDB(process.env.MONGODB_URI)
