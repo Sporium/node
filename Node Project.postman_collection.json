@@ -175,6 +175,64 @@
 			"response": []
 		},
 		{
+			"name": "Update item",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"dwq\",\n    \"description\": \"some\",\n    \"price\": 56\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_URL}}/api/v1/item/65eec5f5a29d90f19855d464",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"item",
+						"65eec5f5a29d90f19855d464"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete item",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_URL}}/api/v1/item/65eec5f5a29d90f19855d464",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"item",
+						"65eec5f5a29d90f19855d464"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Sing In",
 			"event": [
 				{

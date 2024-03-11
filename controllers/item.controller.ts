@@ -48,6 +48,17 @@ const update = async (req: ApiRequestInterface<UpdateItemParams>, res: Response<
     }
 }
 
+const deleteItem = async (req: ApiRequestInterface<UpdateItemParams>, res: Response<IItem | IErrorResponse>) => {
+    const itemId = req.params.id
+    const deleted = await Item.findOneAndDelete({ _id: itemId })
+    if (deleted) {
+        res.status(StatusCodes.OK).json(itemResource(deleted))
+    } else {
+        res.status(StatusCodes.NOT_FOUND).send({message: `No item with id : ${itemId}`});
+    }
+
+}
+
 const getAllItems = async (req: ApiRequestInterface, res: Response<IItemResource | IErrorResponse>) => {
     try {
         const items = await Item.find({})
@@ -77,6 +88,7 @@ const getItemsByUser =  async (req: ApiRequestInterface, res: Response<IItemReso
 module.exports = {
     create,
     update,
+    deleteItem,
     getAllItems,
     getItemsByUser,
 }
