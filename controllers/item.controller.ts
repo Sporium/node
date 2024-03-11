@@ -46,8 +46,20 @@ const getAllItems = async (req: ApiRequestInterface, res: Response<IItemResource
     }
 }
 
+const getItemsByUser =  async (req: ApiRequestInterface, res: Response<IItemResource | IErrorResponse>) => {
+        try {
+            const decoded = decodeJwt(req?.headers.authorization)
+            const user = await User.findOne({_id: decoded.id})
+                .populate('items');
+            res.status(StatusCodes.OK).json(itemCollection(user?.items))
+        }
+        catch (e) {
+            res.status(StatusCodes.NOT_FOUND).json({message: (e as Mongoose.Error)?.name});
+        }
+}
 
 module.exports = {
     create,
     getAllItems,
+    getItemsByUser
 }
