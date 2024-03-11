@@ -1,11 +1,9 @@
-import {Request} from "express";
+import { type Request } from 'express'
 
 export interface IErrorResponse {
-    message: {
-            [key: string]: any
-        }
-        | string
+  message: Record<string, any>
+  | string
 }
 
 export interface ApiRequestInterface<ReqDictionary = {}, ResBody = {}, ReqBody = {}, ReqQuery = {}> extends
-    Request<ReqDictionary, ResBody, ReqBody, ReqQuery> {}
+  Request<ReqDictionary, ResBody, ReqBody, ReqQuery> {}
