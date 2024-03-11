@@ -32,6 +32,22 @@ const create = async (req: ApiRequestInterface<{},{},IItem>, res: Response<IItem
     }
 }
 
+export interface UpdateItemParams extends IItem {
+    id: string
+}
+const update = async (req: ApiRequestInterface<UpdateItemParams>, res: Response<IItem | IErrorResponse>) => {
+    const itemID = req.params.id
+    const filter = { _id: '65eec5f5a29d90f19855d464' };
+    const opts = { new: true };
+
+    let changed = await Item.findOneAndUpdate(filter, req.body, opts);
+    if (changed) {
+        res.status(StatusCodes.OK).json(itemResource(changed))
+    } else {
+        res.status(StatusCodes.NOT_FOUND).send({message: `No item with id : ${itemID}`});
+    }
+}
+
 const getAllItems = async (req: ApiRequestInterface, res: Response<IItemResource | IErrorResponse>) => {
     try {
         const items = await Item.find({})
@@ -60,6 +76,7 @@ const getItemsByUser =  async (req: ApiRequestInterface, res: Response<IItemReso
 
 module.exports = {
     create,
+    update,
     getAllItems,
-    getItemsByUser
+    getItemsByUser,
 }
