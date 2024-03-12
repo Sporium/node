@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 import type * as Mongoose from 'mongoose'
+import { type IItemResource } from '../resources/item.resource'
 const itemResource = require('../resources/item.resource')
 export interface IItem {
   name: string
@@ -17,10 +18,12 @@ const ItemSchema = new Schema<ItemDocument>({
   description: { type: String }
 })
 
-const itemCollection = (items: ItemDocument[]) => {
+export const Item = mongoose.model<ItemDocument>('Item', ItemSchema)
+export const itemCollection = (items: ItemDocument[]): IItemResource[] => {
   return items.map(item => itemResource(item))
 }
-module.exports = {
-  Item: mongoose.model<ItemDocument>('Item', ItemSchema),
-  itemCollection
-}
+
+// module.exports = {
+//   Item: mongoose.model<ItemDocument>('Item', ItemSchema),
+//   itemCollection
+// }

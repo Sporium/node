@@ -1,11 +1,12 @@
-import mongoose from 'mongoose'
+import mongoose, { type Mongoose } from 'mongoose'
 
-const connectDB = async (url: string = 'mongodb://mongo:27017/node_DB') => {
+const connectDB = async (url: string = 'mongodb://mongo:27017/node_DB'): Promise<Mongoose> => {
+  const options: mongoose.ConnectOptions = {
+    autoIndex: true
+  }
   return await mongoose.connect(
     url,
-    {
-      autoIndex: true
-    } as mongoose.ConnectOptions
+    options
   )
 }
 module.exports = connectDB

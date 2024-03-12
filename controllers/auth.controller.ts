@@ -10,15 +10,15 @@ const userResource = require('../resources/user.resource')
 
 const bcrypt = require('bcrypt')
 
-async function generatePass (plaintextPassword: string) {
-  return await bcrypt.hash(plaintextPassword, 10)
+async function generatePass (plaintextPassword: string): Promise<string> {
+  return bcrypt.hash(plaintextPassword, 10)
 }
 
-async function comparePassword (plaintextPassword: string, hash: string) {
-  return await bcrypt.compare(plaintextPassword, hash)
+async function comparePassword (plaintextPassword: string, hash: string): Promise<string> {
+  return bcrypt.compare(plaintextPassword, hash)
 }
 
-const register = async (req: ApiRequestInterface<{}, {}, IUser>, res: Response<IUserResource | IErrorResponse>) => {
+const register = async (req: ApiRequestInterface<{}, {}, IUser>, res: Response<IUserResource | IErrorResponse>): Promise<void> => {
   try {
     const pass = await generatePass(req.body.password)
     const user = await new User({
@@ -37,11 +37,10 @@ const register = async (req: ApiRequestInterface<{}, {}, IUser>, res: Response<I
   }
 }
 
-const signIn = async (req: ApiRequestInterface<{}, {}, { name: string, password: string }>, res: Response<IUserResource | IErrorResponse>) => {
+const signIn = async (req: ApiRequestInterface<Record<string, unknown>, Record<string, unknown>, { name: string, password: string }>, res: Response<IUserResource | IErrorResponse>): Promise<void> => {
   try {
     const { name, password } = req.body
-    let existingUser: UserDocument | null
-    existingUser = await User.findOne({ name })
+    const existingUser: UserDocument | null = await User.findOne({ name })
     if (existingUser) {
       const isValid = await comparePassword(password, existingUser.password)
       const token = generateJWT(existingUser)
@@ -57,10 +56,11 @@ const signIn = async (req: ApiRequestInterface<{}, {}, { name: string, password:
   }
 }
 
-const getAllUsers = async (req: Request, res: Response<IUser | IErrorResponse>) => {
+const getAllUsers = async (req: Request, res: Response<IUserResource[] | IErrorResponse>): Promise<void> => {
   try {
     const users = await User.find({})
-    res.status(StatusCodes.OK).json(usersCollection(users))
+    const collection: IUserResource[] = usersCollection(users)
+    res.status(StatusCodes.OK).json(collection)
   } catch (e) {
     const err = e as Error
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: err })

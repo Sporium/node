@@ -4,12 +4,12 @@ import { JWT_KEY } from '../config/constants'
 import jwt from 'jsonwebtoken'
 
 const getTokenFromHeader = (authorization: string | undefined): string => {
-  return authorization?.split(' ')[1]!
+  return authorization?.split(' ')[1] ?? ''
 }
-const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+const authMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const token = getTokenFromHeader(req.headers.authorization)
   if (token) {
-    jwt.verify(token, JWT_KEY || '', async (err: jwt.VerifyErrors | null) => {
+    jwt.verify(token, JWT_KEY || '', (err: jwt.VerifyErrors | null) => {
       if (err) {
         return res
           .status(StatusCodes.FORBIDDEN)

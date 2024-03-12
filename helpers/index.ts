@@ -4,7 +4,7 @@ import { JWT_KEY } from '../config/constants'
 import { type IUserResource } from '../resources/user.resource'
 
 export interface UserJwtPayload extends Omit<IUserResource, 'token'>, JwtPayload {}
-export const generateJWT = (user: Pick<UserDocument, 'name' | 'id'>) => {
+export const generateJWT = (user: Pick<UserDocument, 'name' | 'id'>): string => {
   return jwt.sign(
     { id: user.id || '', name: user.name || '' },
     JWT_KEY,
@@ -13,7 +13,7 @@ export const generateJWT = (user: Pick<UserDocument, 'name' | 'id'>) => {
 }
 
 export const getTokenFromHeader = (authorization: string | undefined): string => {
-  return authorization?.split(' ')[1]!
+  return authorization?.split(' ')[1] ?? ''
 }
 
 export const decodeJwt = (authorization: string | undefined): UserJwtPayload => {
