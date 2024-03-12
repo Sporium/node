@@ -5,7 +5,7 @@ import { type ApiRequestInterface, type IErrorResponse } from '../types/types'
 import { type IItem } from '../models/item.model'
 import { type IItemResource } from '../resources/item.resource'
 import { decodeJwt } from '../helpers'
-const { Item } = require('../models/item.model')
+const { Item, itemCollection } = require('../models/item.model')
 const { User } = require('../models/user.model')
 const itemResource = require('../resources/item.resource')
 
@@ -60,7 +60,7 @@ const deleteItem = async (req: ApiRequestInterface<UpdateItemParams>, res: Respo
 const getAllItems = async (req: ApiRequestInterface, res: Response<IItemResource | IErrorResponse>) => {
   try {
     const items = await Item.find({})
-    const itemsResource: IItemResource = itemResource(items)
+    const itemsResource: IItemResource = itemCollection(items)
     res.status(StatusCodes.OK).json(itemsResource)
   } catch (e) {
     const err = e as Mongoose.Error
@@ -76,7 +76,7 @@ const getItemsByUser = async (req: ApiRequestInterface, res: Response<IItemResou
     const decoded = decodeJwt(req?.headers.authorization)
     const user = await User.findOne({ _id: decoded.id })
       .populate('items')
-    const itemsResource: IItemResource = itemResource(user?.items)
+    const itemsResource: IItemResource = itemCollection(user?.items)
     res.status(StatusCodes.OK).json(itemsResource)
   } catch (e) {
     res.status(StatusCodes.NOT_FOUND).json({ message: (e as Mongoose.Error)?.name })

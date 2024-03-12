@@ -1,11 +1,12 @@
 import express, { type Express } from 'express'
 import 'dotenv/config'
 import mongoose from 'mongoose'
+import type * as core from 'express-serve-static-core'
 const connectDB = require('./config/db-connect')
 
 const app: Express = express()
 const port = process.env.PORT
-const routes = require('./routes')
+const routes: core.Router = require('./routes')
 
 mongoose.set('strictQuery', false)
 
@@ -14,7 +15,7 @@ app.use(express.json())
 
 // routes
 app.use('/api/v1', routes)
-const start = async () => {
+const start = async (): Promise<void> => {
   try {
     await connectDB(process.env.MONGODB_URI)
     app.listen(port, () => {
