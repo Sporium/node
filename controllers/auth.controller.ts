@@ -5,8 +5,8 @@ import type * as Mongoose from 'mongoose'
 import { type ApiRequestInterface, type IErrorResponse } from '../types/types'
 import { type IUserResource } from '../resources/user.resource'
 import { generateJWT } from '../helpers'
-const { User, usersCollection } = require('../models/user.model')
-const userResource = require('../resources/user.resource')
+import { User, usersCollection } from '../models/user.model'
+import { userResource } from '../resources/user.resource'
 
 const bcrypt = require('bcrypt')
 
@@ -18,16 +18,16 @@ async function comparePassword (plaintextPassword: string, hash: string): Promis
   return bcrypt.compare(plaintextPassword, hash)
 }
 
-const register = async (req: ApiRequestInterface<{}, {}, IUser>, res: Response<IUserResource | IErrorResponse>): Promise<void> => {
+const register = async (req: ApiRequestInterface<Record<string, unknown>, Record<string, unknown>, IUser>, res: Response<IUserResource | IErrorResponse>): Promise<void> => {
   try {
     const pass = await generatePass(req.body.password)
-    const user = await new User({
+    const user = new User({
       name: req.body.name,
       password: pass
     })
     const token = generateJWT({ id: user._id, name: user.name })
     await user.save()
-    res.status(StatusCodes.CREATED).json({ ...userResource(user, token) as IUserResource })
+    res.status(StatusCodes.CREATED).json({ ...userResource(user, token) })
   } catch (e) {
     const err = e as Mongoose.Error
     if (err.name === 'MongoError') {
@@ -45,7 +45,7 @@ const signIn = async (req: ApiRequestInterface<Record<string, unknown>, Record<s
       const isValid = await comparePassword(password, existingUser.password)
       const token = generateJWT(existingUser)
       if (isValid) {
-        res.status(StatusCodes.OK).json({ ...userResource(existingUser, token) as IUserResource })
+        res.status(StatusCodes.OK).json({ ...userResource(existingUser, token) })
       }
     } else {
       res.status(StatusCodes.BAD_REQUEST).json({ message: 'Invalid username or password' })

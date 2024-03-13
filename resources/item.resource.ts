@@ -1,16 +1,18 @@
 import { type ItemDocument } from '../models/item.model'
 
-export interface IItemResource extends Pick<ItemDocument, 'name' | 'description' | 'price'> {
+export interface Item extends Pick<ItemDocument, 'name' | 'description' | 'price'> {
   id: string
 }
+export type IItemResource = Item | null
 
-function itemResource (item: ItemDocument): IItemResource {
-  return {
-    id: item._id,
-    name: item.name,
-    description: item.description,
-    price: item.price
+export function itemResource (item: ItemDocument | null): IItemResource {
+  if (item) {
+    return {
+      id: item._id,
+      name: item.name,
+      description: item.description,
+      price: item.price
+    }
   }
+  return null
 }
-
-module.exports = itemResource

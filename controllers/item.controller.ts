@@ -6,11 +6,10 @@ import { type IItem } from '../models/item.model'
 import { type IItemResource } from '../resources/item.resource'
 import { decodeJwt } from '../helpers'
 import { Item, itemCollection } from '../models/item.model'
-import { type UserDocument } from '../models/user.model'
-const { User } = require('../models/user.model')
-const itemResource = require('../resources/item.resource')
+import { User } from '../models/user.model'
+import { itemResource } from '../resources/item.resource'
 
-const create = async (req: ApiRequestInterface<{}, {}, IItem>, res: Response<IItemResource | IErrorResponse>): Promise<void> => {
+const create = async (req: ApiRequestInterface<Record<string, any>, Record<string, any>, IItem>, res: Response<IItemResource | IErrorResponse>): Promise<void> => {
   try {
     const item = await Item.create({
       name: req.body.name,
@@ -20,7 +19,7 @@ const create = async (req: ApiRequestInterface<{}, {}, IItem>, res: Response<IIt
     const token = decodeJwt(req.headers.authorization)
     await User.findOneAndUpdate({ _id: token.id }, { $push: { items: item._id } }, { new: true, useFindAndModify: true }) //
     await item.save()
-    res.status(StatusCodes.CREATED).json({ ...itemResource(item) as IItemResource })
+    res.status(StatusCodes.CREATED).json(itemResource(item))
   } catch (e) {
     const err = e as Mongoose.Error
     if (err.name === 'MongoError') {
@@ -47,7 +46,7 @@ const update = async (req: ApiRequestInterface<UpdateItemParams>, res: Response<
   }
 }
 
-const deleteItem = async (req: ApiRequestInterface<UpdateItemParams>, res: Response<IItem | IErrorResponse>) => {
+const deleteItem = async (req: ApiRequestInterface<UpdateItemParams>, res: Response<IItemResource | IErrorResponse>) => {
   const itemId = req.params.id
   try {
     const deleted = await Item.findOneAndDelete({ _id: itemId })
@@ -75,10 +74,10 @@ const getAllItems = async (req: ApiRequestInterface, res: Response<IItemResource
 const getItemsByUser = async (req: ApiRequestInterface, res: Response<IItemResource[] | IErrorResponse>): Promise<void> => {
   try {
     const decoded = decodeJwt(req?.headers.authorization)
-    const user: UserDocument = await User.findOne({ _id: decoded.id })
+    const user = await User.findOne({ _id: decoded.id })
       .populate('items')
     if (user?.items.length) {
-      const itemsResource = itemCollection(user?.items)
+      const itemsResource = itemCollection(user.items)
       res.status(StatusCodes.OK).json(itemsResource)
     } else {
       res.status(StatusCodes.OK).json([])

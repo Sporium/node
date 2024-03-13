@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose'
 import type * as Mongoose from 'mongoose'
 import { type ItemDocument } from './item.model'
 import { type IUserResource } from '../resources/user.resource'
+import { userResource } from '../resources/user.resource'
 
 export interface IUser {
   name: string
@@ -9,7 +10,6 @@ export interface IUser {
   password: string
   items: ItemDocument[]
 }
-const userResource = require('../resources/user.resource')
 
 export interface UserDocument extends IUser, Mongoose.Document {
   id: string | number
@@ -24,10 +24,7 @@ const UserSchema = new Schema<UserDocument>({
   }]
 })
 
-const usersCollection = (users: UserDocument[]): IUserResource[] => {
+export const User = mongoose.model<UserDocument>('User', UserSchema)
+export const usersCollection = (users: UserDocument[]): IUserResource[] => {
   return users.map(user => userResource(user))
-}
-module.exports = {
-  User: mongoose.model<UserDocument>('User', UserSchema),
-  usersCollection
 }
