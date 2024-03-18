@@ -7,9 +7,12 @@ const authMiddleware = require('../middleware/auth')
 
 const {
   register,
-  signIn,
-  getAllUsers
+  signIn
 } = require('../controllers/auth.controller')
+const {
+  getAllUsers,
+  me
+} = require('../controllers/user.controller')
 
 const {
   create,
@@ -22,6 +25,7 @@ const {
 router.route('/auth/register').post(registerValidationRules, register)
 router.route('/auth/signin').post(signIn)
 router.route('/users').get(authMiddleware, getAllUsers)
+router.route('/me').get(authMiddleware, me)
 router.route('/item').post(authMiddleware, create)
 router.route('/item/:id').put(authMiddleware, update)
 router.route('/item/:id').delete(authMiddleware, deleteItem)

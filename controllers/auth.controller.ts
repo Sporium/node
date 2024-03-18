@@ -56,19 +56,7 @@ const signIn = async (req: ApiRequestInterface<Record<string, unknown>, Record<s
   }
 }
 
-const getAllUsers = async (req: Request, res: Response<IUserResource[] | IErrorResponse>): Promise<void> => {
-  try {
-    const users = await User.find({})
-    const collection: IUserResource[] = usersCollection(users)
-    res.status(StatusCodes.OK).json(collection)
-  } catch (e) {
-    const err = e as Error
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: err })
-  }
-}
-
 module.exports = {
   register,
-  signIn,
-  getAllUsers
+  signIn
 }
