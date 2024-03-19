@@ -35,13 +35,19 @@ export interface UpdateItemParams extends IItem {
 const update = async (req: ApiRequestInterface<UpdateItemParams>, res: Response<IItemResource | IErrorResponse>): Promise<void> => {
   const itemID = req.params.id
   try {
-    const filter = { _id: req.params.id }
-    const opts = { new: true }
-
-    const changed = await Item.findOneAndUpdate(filter, req.body, opts)
-    const itemsResource: IItemResource = itemResource(changed)
+    const decoded = decodeJwt(req?.headers.authorization)
+    const user = await User.findById(decoded.id)
+    const item = await Item.findOneAndUpdate({ _id: itemID }, {
+      ...req.body,
+      user
+    })
+    await user?.updateOne({}, {
+      $push: { items: item }
+    })
+    const itemsResource: IItemResource = itemResource(item)
     res.status(StatusCodes.OK).json(itemsResource)
   } catch (e) {
+    console.log(e)
     res.status(StatusCodes.NOT_FOUND).send({ message: `No item with id : ${itemID}` })
   }
 }

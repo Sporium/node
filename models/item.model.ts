@@ -2,10 +2,12 @@ import mongoose, { Schema } from 'mongoose'
 import type * as Mongoose from 'mongoose'
 import { type IItemResource } from '../resources/item.resource'
 import { itemResource } from '../resources/item.resource'
+import { type UserDocument } from './user.model'
 export interface IItem {
   name: string
   price: number
   description?: string
+  user: UserDocument
 }
 
 export interface ItemDocument extends IItem, Mongoose.Document {
@@ -15,7 +17,12 @@ export interface ItemDocument extends IItem, Mongoose.Document {
 const ItemSchema = new Schema<ItemDocument>({
   name: { type: String, required: [true, 'Name is required'], maxLength: 20, unique: true },
   price: { type: Number, required: [true, 'Price is required'] },
-  description: { type: String }
+  description: { type: String },
+  user: [{
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
+  }]
 })
 
 export const Item = mongoose.model<ItemDocument>('Item', ItemSchema)
