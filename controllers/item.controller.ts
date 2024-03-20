@@ -37,17 +37,19 @@ const update = async (req: ApiRequestInterface<UpdateItemParams>, res: Response<
   try {
     const decoded = decodeJwt(req?.headers.authorization)
     const user = await User.findById(decoded.id)
-    const item = await Item.findOneAndUpdate({ _id: itemID }, {
-      ...req.body,
-      user
-    })
-    await user?.updateOne({}, {
-      $push: { items: item }
-    })
-    const itemsResource: IItemResource = itemResource(item)
-    res.status(StatusCodes.OK).json(itemsResource)
+    const item = await Item.findById(itemID)
+    if (decoded.id === item?.user?._id.toString()) {
+      item?.set({
+        ...req.body,
+        user
+      })
+      await item?.save()
+      const itemsResource: IItemResource = itemResource(item)
+      res.status(StatusCodes.OK).json(itemsResource)
+    } else {
+      res.status(StatusCodes.FORBIDDEN).json({ message: 'This action is forbidden' })
+    }
   } catch (e) {
-    console.log(e)
     res.status(StatusCodes.NOT_FOUND).send({ message: `No item with id : ${itemID}` })
   }
 }

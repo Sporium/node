@@ -18,11 +18,11 @@ const ItemSchema = new Schema<ItemDocument>({
   name: { type: String, required: [true, 'Name is required'], maxLength: 20, unique: true },
   price: { type: Number, required: [true, 'Price is required'] },
   description: { type: String },
-  user: [{
+  user: {
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'User'
-  }]
+  }
 })
 
 export const Item = mongoose.model<ItemDocument>('Item', ItemSchema)

@@ -1,7 +1,7 @@
 import { type Response } from 'express'
-import { type IUserResource, userResource, userWithItemsResource } from '../resources/user.resource'
+import { type IUserResource, userWithItemsResource } from '../resources/user.resource'
 import { type ApiRequestInterface, type IErrorResponse } from '../types/types'
-import { User, type UserDocument, usersCollection } from '../models/user.model'
+import { User, usersCollection } from '../models/user.model'
 import { StatusCodes } from 'http-status-codes'
 import { decodeJwt } from '../helpers'
 
