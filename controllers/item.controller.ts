@@ -11,14 +11,16 @@ import { itemResource } from '../resources/item.resource'
 
 const create = async (req: ApiRequestInterface<Record<string, any>, Record<string, any>, IItem>, res: Response<IItemResource | IErrorResponse>): Promise<void> => {
   try {
+    const decoded = decodeJwt(req?.headers.authorization)
+    const user = await User.findById(decoded.id)
     const item = await Item.create({
       name: req.body.name,
       description: req.body.description,
-      price: req.body.price
+      price: req.body.price,
+      user: user?._id
     })
     const token = decodeJwt(req.headers.authorization)
-    await User.findOneAndUpdate({ _id: token.id }, { $push: { items: item._id } }, { new: true, useFindAndModify: true }) //
-    await item.save()
+    await user?.updateOne({ _id: token.id }, { $push: { items: item._id } })
     res.status(StatusCodes.CREATED).json(itemResource(item))
   } catch (e) {
     const err = e as Mongoose.Error
@@ -54,12 +56,17 @@ const update = async (req: ApiRequestInterface<UpdateItemParams>, res: Response<
   }
 }
 
-const deleteItem = async (req: ApiRequestInterface<UpdateItemParams>, res: Response<IItemResource | IErrorResponse>) => {
+const deleteItem = async (req: ApiRequestInterface<UpdateItemParams>, res: Response<IItemResource | IErrorResponse>): Promise<void> => {
   const itemId = req.params.id
   try {
-    const deleted = await Item.findOneAndDelete({ _id: itemId })
-    const itemsResource: IItemResource = itemResource(deleted)
-    res.status(StatusCodes.OK).json(itemsResource)
+    const item = await Item.findById(itemId)
+    const decoded = decodeJwt(req?.headers.authorization)
+    if (decoded.id === item?.user?._id.toString()) {
+      await item.deleteOne()
+      res.status(StatusCodes.OK).json()
+    } else {
+      res.status(StatusCodes.FORBIDDEN).send({ message: 'This action is forbidden' })
+    }
   } catch (e) {
     res.status(StatusCodes.NOT_FOUND).send({ message: `No item with id : ${itemId}` })
   }
