@@ -18,6 +18,7 @@ const {
   create,
   update,
   deleteItem,
+  getItemById,
   getAllItems,
   getItemsByUser
 } = require('../controllers/item.controller')
@@ -29,6 +30,7 @@ router.route('/me').get(authMiddleware, me)
 router.route('/item').post(authMiddleware, create)
 router.route('/item/:id').put(authMiddleware, update)
 router.route('/item/:id').delete(authMiddleware, deleteItem)
+router.route('/item/:id').get(authMiddleware, getItemById)
 router.route('/items').get(authMiddleware, getAllItems)
 router.route('/user-items').get(authMiddleware, getItemsByUser)
 

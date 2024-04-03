@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import type * as Mongoose from 'mongoose'
 import { type ApiRequestInterface, type IErrorResponse } from '../types/types'
 import { type IItem } from '../models/item.model'
-import { type IItemResource } from '../resources/item.resource'
+import { type IItemResource, itemWithUserResource } from '../resources/item.resource'
 import { decodeJwt } from '../helpers'
 import { Item, itemCollection } from '../models/item.model'
 import { User } from '../models/user.model'
@@ -72,6 +72,16 @@ const deleteItem = async (req: ApiRequestInterface<UpdateItemParams>, res: Respo
   }
 }
 
+const getItemById = async (req: ApiRequestInterface<UpdateItemParams>, res: Response<IItemResource | IErrorResponse>): Promise<void> => {
+  const itemId = req.params.id
+  try {
+    const item = await Item.findById(itemId).populate('user')
+    res.status(StatusCodes.OK).json(itemWithUserResource(item))
+  } catch (e) {
+    res.status(StatusCodes.NOT_FOUND).send({ message: `No item with id : ${itemId}` })
+  }
+}
+
 const getAllItems = async (req: ApiRequestInterface, res: Response<IItemResource[] | IErrorResponse>): Promise<void> => {
   try {
     const items = await Item.find({})
@@ -106,6 +116,7 @@ module.exports = {
   create,
   update,
   deleteItem,
+  getItemById,
   getAllItems,
   getItemsByUser
 }
