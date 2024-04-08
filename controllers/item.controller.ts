@@ -85,6 +85,7 @@ const getItemById = async (req: ApiRequestInterface<UpdateItemParams>, res: Resp
 const getAllItems = async (req: ApiRequestInterface, res: Response<IItemResource[] | IErrorResponse>): Promise<void> => {
   try {
     const items = await Item.find({})
+    console.log(items)
     const itemsResource: IItemResource[] = itemCollection(items)
     res.status(StatusCodes.OK).json(itemsResource)
   } catch (e) {

@@ -7,6 +7,7 @@ export interface IItem {
   name: string
   price: number
   description?: string
+  images?: string
   user: UserDocument
 }
 
@@ -18,6 +19,7 @@ const ItemSchema = new Schema<ItemDocument>({
   name: { type: String, required: [true, 'Name is required'], maxLength: 20, unique: true },
   price: { type: Number, required: [true, 'Price is required'] },
   description: { type: String },
+  images: [{ type: String }],
   user: {
     type: Schema.Types.ObjectId,
     required: true,
