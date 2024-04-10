@@ -1,6 +1,6 @@
 import { type UserDocument } from '../models/user.model'
 import jwt, { type JwtPayload } from 'jsonwebtoken'
-import { JWT_KEY } from '../config/constants'
+import { JWT_KEY } from '../../config/constants'
 import { type IUserResource } from '../resources/user.resource'
 
 export interface UserJwtPayload extends Omit<IUserResource, 'token'>, JwtPayload {}

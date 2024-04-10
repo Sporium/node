@@ -6,7 +6,7 @@ const connectDB = require('./config/db-connect')
 
 const app: Express = express()
 const port = process.env.PORT
-const routes: core.Router = require('./routes')
+const routes: core.Router = require('./src/routes')
 
 mongoose.set('strictQuery', false)
 

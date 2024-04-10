@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { JWT_KEY } from '../config/constants'
+import { JWT_KEY } from '../../config/constants'
 import jwt from 'jsonwebtoken'
 
 const getTokenFromHeader = (authorization: string | undefined): string => {
