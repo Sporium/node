@@ -23,6 +23,10 @@ const {
   getItemsByUser
 } = require('../controllers/item.controller')
 
+const {
+  uploadImage
+} = require('../controllers/image.controller')
+
 router.route('/auth/register').post(registerValidationRules, register)
 router.route('/auth/signin').post(signIn)
 router.route('/users').get(authMiddleware, getAllUsers)
@@ -33,5 +37,6 @@ router.route('/item/:id').delete(authMiddleware, deleteItem)
 router.route('/item/:id').get(authMiddleware, getItemById)
 router.route('/items').get(authMiddleware, getAllItems)
 router.route('/user-items').get(authMiddleware, getItemsByUser)
+router.route('/upload-image').get(uploadImage)
 
 module.exports = router
