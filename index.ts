@@ -7,12 +7,13 @@ const connectDB = require('./config/db-connect')
 const app: Express = express()
 const port = process.env.PORT
 const routes: core.Router = require('./src/routes')
+const fileUpload = require('express-fileupload')
 
 mongoose.set('strictQuery', false)
 
 // middlewares
 app.use(express.json())
-
+app.use(fileUpload())
 // routes
 app.use('/api/v1', routes)
 const start = async (): Promise<void> => {
