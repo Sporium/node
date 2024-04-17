@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 import type Mongoose from 'mongoose'
 import { FILES_STORAGE } from '../../config/constants'
 
-const uploadImage = async (req: ReqWithFiles<'image'>, res: Response<IErrorResponse>): Promise<void> => {
+const uploadIFiles = async (req: ReqWithFiles<'image'>, res: Response<IErrorResponse>): Promise<void> => {
   try {
     const { image } = req.files
     const uploadPath = FILES_STORAGE + image.name
@@ -24,5 +24,5 @@ const uploadImage = async (req: ReqWithFiles<'image'>, res: Response<IErrorRespo
 }
 
 module.exports = {
-  uploadImage
+  uploadIFiles
 }

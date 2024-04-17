@@ -14,8 +14,8 @@ const {
   me
 } = require('../controllers/user.controller')
 const {
-  uploadImage
-} = require('../controllers/image.controller')
+  uploadIFiles
+} = require('../controllers/files.controller')
 
 const {
   create,
@@ -36,6 +36,6 @@ router.route('/item/:id').delete(authMiddleware, deleteItem)
 router.route('/item/:id').get(authMiddleware, getItemById)
 router.route('/items').get(authMiddleware, getAllItems)
 router.route('/user-items').get(authMiddleware, getItemsByUser)
-router.route('/upload-image').post(uploadImage)
+router.route('/upload-file').post(uploadIFiles)
 
 module.exports = router
