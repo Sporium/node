@@ -7,8 +7,14 @@ export interface IItem {
   name: string
   price: number
   description?: string
-  images?: string
+  images?: IImage
   user: UserDocument
+}
+
+export interface IImage {
+  name: string
+  src: string
+  thumb?: string
 }
 
 export interface ItemDocument extends IItem, Mongoose.Document {
@@ -19,7 +25,7 @@ const ItemSchema = new Schema<ItemDocument>({
   name: { type: String, required: [true, 'Name is required'], maxLength: 20, unique: true },
   price: { type: Number, required: [true, 'Price is required'] },
   description: { type: String },
-  images: [{ type: String }],
+  images: [{ type: Object }],
   user: {
     type: Schema.Types.ObjectId,
     required: true,

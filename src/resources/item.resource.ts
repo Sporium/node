@@ -1,8 +1,7 @@
 import { type ItemDocument } from '../models/item.model'
 import { type IUserResource, userResource } from './user.resource'
-import { IUser, UserDocument } from '../models/user.model'
 
-export interface Item extends Pick<ItemDocument, 'name' | 'description' | 'price'> {
+export interface Item extends Pick<ItemDocument, 'name' | 'description' | 'price' | 'images'> {
   id: string
   user?: IUserResource
 }
@@ -14,7 +13,8 @@ export function itemResource (item: ItemDocument | null): IItemResource {
       id: item._id,
       name: item.name,
       description: item.description,
-      price: item.price
+      price: item.price,
+      images: item.images
     }
   }
   return null

@@ -13,7 +13,9 @@ mongoose.set('strictQuery', false)
 
 // middlewares
 app.use(express.json())
-app.use(fileUpload())
+app.use(fileUpload({
+  tempFileDir: './tempStorage'
+}))
 // routes
 app.use('/api/v1', routes)
 const start = async (): Promise<void> => {

@@ -8,8 +8,8 @@ export interface IErrorResponse {
 export interface ApiRequestInterface<ReqDictionary = Record<string, unknown>, ResBody = Record<string, unknown>, ReqBody = Record<string, unknown>, ReqQuery = Record<string, unknown>> extends
   Request<ReqDictionary, ResBody, ReqBody, ReqQuery> {}
 
-export interface ReqWithFiles<T, ReqDictionary = Record<string, unknown>, ResBody = Record<string, unknown>, ReqBody = Record<string, unknown>, ReqQuery = Record<string, unknown>> extends ApiRequestInterface<ReqDictionary, ResBody, ReqBody, ReqQuery> {
-  files: {
+export interface ReqWithFiles<ReqDictionary = Record<string, unknown>, ResBody = Record<string, unknown>, ReqBody = Record<string, unknown>, ReqQuery = Record<string, unknown>, T> extends ApiRequestInterface<ReqDictionary, ResBody, ReqBody, ReqQuery> {
+  files?: {
     [Key in T]: UploadedFile
   }
 }

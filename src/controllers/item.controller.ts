@@ -1,22 +1,36 @@
 import { type Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import type * as Mongoose from 'mongoose'
-import { type ApiRequestInterface, type IErrorResponse } from '../types/types'
-import { type IItem } from '../models/item.model'
+import { type ApiRequestInterface, type IErrorResponse, type ReqWithFiles } from '../types/types'
+import { type IImage, type IItem } from '../models/item.model'
 import { type IItemResource, itemWithUserResource } from '../resources/item.resource'
 import { decodeJwt } from '../helpers'
 import { Item, itemCollection } from '../models/item.model'
 import { User } from '../models/user.model'
 import { itemResource } from '../resources/item.resource'
-
-const create = async (req: ApiRequestInterface<Record<string, any>, Record<string, any>, IItem>, res: Response<IItemResource | IErrorResponse>): Promise<void> => {
+import { AWS_BUCKET_NAME, FILES_STORAGE } from '../../config/constants'
+import { type UploadedFile } from 'express-fileupload'
+const s3 = require('../../config/aws.config')
+const create = async (
+  req: ReqWithFiles<UpdateItemParams, Record<string, unknown>, Record<string, unknown>, Record<string, unknown>, 'image'>,
+  res: Response<IItemResource | IErrorResponse>): Promise<void> => {
   try {
     const decoded = decodeJwt(req?.headers.authorization)
     const user = await User.findById(decoded.id)
+    let image: IImage | null = null
+    const uploadedFile = await uploadToAWS(req.files?.image)
+
+    if (uploadedFile && Object.prototype.hasOwnProperty.call(uploadedFile, 'Location')) {
+      image = {
+        name: req.files?.image.name ?? '',
+        src: (uploadedFile as AWSData).Location
+      }
+    }
     const item = await Item.create({
       name: req.body.name,
       description: req.body.description,
       price: req.body.price,
+      images: image ? [image] : [],
       user: user?._id
     })
     const token = decodeJwt(req.headers.authorization)
@@ -34,15 +48,28 @@ const create = async (req: ApiRequestInterface<Record<string, any>, Record<strin
 export interface UpdateItemParams extends IItem {
   id: string
 }
-const update = async (req: ApiRequestInterface<UpdateItemParams>, res: Response<IItemResource | IErrorResponse>): Promise<void> => {
+
+const update = async (
+  req: ReqWithFiles<UpdateItemParams, Record<string, unknown>, Record<string, unknown>, Record<string, unknown>, 'image'>,
+  res: Response<IItemResource | IErrorResponse>): Promise<void> => {
   const itemID = req.params.id
   try {
     const decoded = decodeJwt(req?.headers.authorization)
     const user = await User.findById(decoded.id)
     const item = await Item.findById(itemID)
+    let image: IImage | null = null
+    const uploadedFile = await uploadToAWS(req.files?.image)
+
+    if (uploadedFile && Object.prototype.hasOwnProperty.call(uploadedFile, 'Location')) {
+      image = {
+        name: req.files?.image.name ?? '',
+        src: (uploadedFile as AWSData).Location
+      }
+    }
     if (decoded.id === item?.user?._id.toString()) {
       item?.set({
         ...req.body,
+        images: [...(Array.isArray(item.images) ? item.images : []), image],
         user
       })
       await item?.save()
@@ -85,7 +112,6 @@ const getItemById = async (req: ApiRequestInterface<UpdateItemParams>, res: Resp
 const getAllItems = async (req: ApiRequestInterface, res: Response<IItemResource[] | IErrorResponse>): Promise<void> => {
   try {
     const items = await Item.find({})
-    console.log(items)
     const itemsResource: IItemResource[] = itemCollection(items)
     res.status(StatusCodes.OK).json(itemsResource)
   } catch (e) {
@@ -95,6 +121,37 @@ const getAllItems = async (req: ApiRequestInterface, res: Response<IItemResource
     }
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: err })
   }
+}
+
+export interface AWSData {
+  ETag: string
+  ServerSideEncryption: string
+  VersionId: string
+  Location: string
+  key: string
+  Key: string
+  Bucket: string
+}
+const uploadToAWS = async (image: UploadedFile | undefined): Promise<AWSData | null | Error> => {
+  if (image) {
+    const uploadParams = {
+      Bucket: AWS_BUCKET_NAME,
+      Key: FILES_STORAGE + image.name,
+      Body: image.data,
+      ContentType: image.mimetype,
+      ACL: 'public-read'
+    }
+    return await new Promise((resolve, reject) => {
+      s3.upload(uploadParams, function (err: Error, data: AWSData) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+  return null
 }
 
 const getItemsByUser = async (req: ApiRequestInterface, res: Response<IItemResource[] | IErrorResponse>): Promise<void> => {
