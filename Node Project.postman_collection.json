@@ -180,13 +180,63 @@
 			"response": []
 		},
 		{
-			"name": "create item",
+			"name": "Update item",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "vvvvvvvvvv",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "some",
+							"type": "text"
+						},
+						{
+							"key": "price",
+							"value": "56",
+							"type": "text"
+						},
+						{
+							"key": "image[0]",
+							"type": "file",
+							"src": "/Users/morozov/Downloads/Futuristic-Sports-Car-Sunset-Scenery-Digital-Art-4K-Wallpaper-10-26-2023-ydihk-01-25-2024 (1).jpg"
+						},
+						{
+							"key": "image[1]",
+							"type": "file",
+							"src": "/Users/morozov/Downloads/B2AE08FE-14F7-45C5-B776-561BFA9E9D4E-0ednt-01-31-2024 (1)-l3l8l-02-05-2024.jpeg"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{API_URL}}/api/v1/item/660a91020dbab1aea8a97d8f",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"item",
+						"660a91020dbab1aea8a97d8f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateItem",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"rw\",\n    \"description\": \"gggg\",\n    \"price\": 13\n}",
+					"raw": "{\n    \"name\": \"vvvvvvvvvv\",\n    \"description\": \"some\",\n    \"price\": 56\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -202,35 +252,6 @@
 						"api",
 						"v1",
 						"item"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update item",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"name\": \"vvvvvvvvvv\",\n    \"description\": \"some\",\n    \"price\": 56\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{API_URL}}/api/v1/item/65f01a3582765e171a446029",
-					"host": [
-						"{{API_URL}}"
-					],
-					"path": [
-						"api",
-						"v1",
-						"item",
-						"65f01a3582765e171a446029"
 					]
 				}
 			},
@@ -260,6 +281,38 @@
 						"v1",
 						"item",
 						"65eec5f5a29d90f19855d464"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Item by ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_URL}}/api/v1/item/65f01a3e82765e171a44602d",
+					"host": [
+						"{{API_URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"item",
+						"65f01a3e82765e171a44602d"
 					]
 				}
 			},
