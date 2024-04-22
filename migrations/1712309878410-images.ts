@@ -15,7 +15,17 @@ module.exports.up = async next => {
     .then(async db => {
       const Items = db.collection('items')
       await Items.updateMany({
-      }, { $push: { images: ['https://uk.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:Grosser_Panda.JPG'] } }, { upsert: true })
+      }, {
+        $set: {
+          images:
+                  [
+                    {
+                      name: 'placeholder.jpeg',
+                      src: 'https://uk.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:Grosser_Panda.JPG'
+                    }
+                  ]
+        }
+      }, { upsert: true })
     })
     .then(() => {
       mClient.close()
