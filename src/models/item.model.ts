@@ -7,7 +7,7 @@ export interface IItem {
   name: string
   price: number
   description?: string
-  images?: IImage
+  images?: IImage[]
   user: UserDocument
 }
 

@@ -21,7 +21,7 @@ module.exports.up = async next => {
                   [
                     {
                       name: 'placeholder.jpeg',
-                      src: 'https://uk.wikipedia.org/wiki/%D0%A4%D0%B0%D0%B9%D0%BB:Grosser_Panda.JPG'
+                      src: 'https://nodeprojbucket.s3.eu-central-1.amazonaws.com/upload/IMG_4947-9f7ed-01-26-2024.jpeg'
                     }
                   ]
         }

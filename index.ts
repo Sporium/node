@@ -6,6 +6,7 @@ const connectDB = require('./config/db-connect')
 
 const app: Express = express()
 const port = process.env.PORT
+const thumbnails = require('./cron/thumbnails')
 const routes: core.Router = require('./src/routes')
 const fileUpload = require('express-fileupload')
 
@@ -21,6 +22,7 @@ app.use('/api/v1', routes)
 const start = async (): Promise<void> => {
   try {
     await connectDB(process.env.MONGODB_URI)
+    thumbnails()
     app.listen(port, () => {
       console.log(`⚡️[server]: Server is running at https://localhost:${port}`)
     }).on('error', err => {
